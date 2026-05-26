@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prime Digital</title>
+    
+    <link href="https://fonts.cdnfonts.com/css/solaimanlipi" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-dark: #0f172a;
+            --classic-blue: #1e3a8a;
+            --accent-blue: #2563eb;
+            --bg-light: #f1f5f9;
+            --card-white: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --success-green: #15803d;
+            --danger-red: #b91c1c;
+            --bkash-pink: #d11264;
+            --whatsapp-green: #25d366;
+        }
+
+        /* ক্লাসিক স্মুথ অ্যানিমেশন */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes logoPulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.02); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
+            70% { box-shadow: 0 0 0 12px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+
+        @keyframes slideInAlert {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, input, textarea, button, select, p, tr, td, th, h1, h2, h3 {
+            font-family: 'SolaimanLipi', Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* অ্যানিমেটেড নোটিফিকেশন টোস্ট */
+        .prime-toast {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            background: var(--primary-dark);
+            color: #ffffff;
+            padding: 16px 28px;
+            border-left: 5px solid #d4af37;
+            border-radius: 4px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            animation: slideInAlert 0.3s ease-out forwards;
+        }
+
+        /* ডাইনামিক ব্র্যান্ড লোগো ইমেজ স্টাইল */
+        .brand-logo-img {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            border-radius: 50%;
+            border: 2px solid #b38728;
+            background: #fff;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .logo-text-main {
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: 800;
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #d4af37 0%, #f3e5ab 50%, #aa771c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .logo-text-sub {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.1rem;
+            color: #60a5fa;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* কাস্টমার ক্লাসিক লগইন প্রি-লোডার স্ক্রিন */
+        #loginPreloader {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--primary-dark);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+        }
+
+        .preloader-img {
+            width: 220px;
+            height: 220px;
+            object-fit: contain;
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+            animation: logoPulse 1.8s infinite ease-in-out;
+            margin-bottom: 25px;
+        }
+
+        .preloader-bar {
+            width: 160px;
+            height: 4px;
+            background: #1e293b;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .preloader-bar::after {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; height: 100%; width: 50%;
+            background: linear-gradient(90deg, #d4af37, #f3e5ab);
+            border-radius: 2px;
+            animation: moveBar 1.2s infinite linear;
+        }
+
+        @keyframes moveBar {
+            0% { left: -50%; }
+            100% { left: 100%; }
+        }
+
+        /* Auth Gateway */
+        .auth-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #0f172a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 5000;
+        }
+
+        .auth-card {
+            background: var(--card-white);
+            padding: 40px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+            animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Classic Navbar */
+        nav {
+            background-color: var(--primary-dark);
+            padding: 12px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid #b38728;
+        }
+
+        nav .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        nav .nav-links span {
+            color: #e2e8f0;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.25s ease;
+        }
+
+        nav .nav-links span:hover { color: #ffffff; }
+
+        .user-balance-badge {
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 8px 16px;
+            border-radius: 4px;
+            color: #38bdf8;
+            font-weight: bold;
+        }
+
+        /* কাস্টমার প্রোফাইল অ্যাভাটার সার্কেল */
+        .cust-nav-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #d4af37;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        /* Classic Hero Banner */
+        .hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .hero h1 { 
+            font-size: 2.8rem; margin-bottom: 15px; font-weight: 700; color: #f8fafc;
+            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .hero p { 
+            font-size: 1.3rem; max-width: 850px; margin: 0 auto; opacity: 0.9; line-height: 1.8;
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Main Containers */
+        .container { max-width: 1300px; margin: 40px auto; padding: 0 25px; }
+
+        /* কাস্টমার হেল্প ডেস্ক প্যানেল */
+        .help-desk-panel {
+            background: linear-gradient(to right, #ffffff, #f8fafc);
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            padding: 25px;
+            margin-bottom: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .help-info h3 { color: var(--primary-dark); font-size: 1.4rem; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+        .help-info p { color: var(--text-muted); font-size: 1rem; }
+
+        .whatsapp-connect-btn {
+            background-color: var(--whatsapp-green);
+            color: white;
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+            transition: all 0.25s ease;
+            animation: pulseGlow 2s infinite;
+        }
+
+        .whatsapp-connect-btn:hover {
+            transform: translateY(-2px);
+            background-color: #20ba5a;
+            box-shadow: 0 6px 16px rgba(37, 211, 102, 0.4);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            color: var(--primary-dark);
+            margin-bottom: 40px;
+            font-weight: 700;
+        }
+
+        /* Service Cards */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .service-card {
+            background: var(--card-white);
+            border-radius: 6px;
+            padding: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #cbd5e1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.08);
+            border-color: #b38728;
+        }
+
+        .service-logo-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .service-img-node {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover .service-img-node {
+            transform: scale(1.1);
+        }
+
+        .service-badge {
+            background: #f1f5f9;
+            color: var(--classic-blue);
+            padding: 4px 12px;
+            font-size: 0.85rem;
+            border-radius: 4px;
+            font-weight: 700;
+            border: 1px solid #e2e8f0;
+        }
+
+        .service-card h3 { font-size: 1.4rem; color: var(--primary-dark); margin-bottom: 10px; font-weight: 700; }
+        .service-card p { font-size: 1rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+
+        .price-tag {
+            font-size: 1.15rem;
+            color: var(--success-green);
+            font-weight: 700;
+            margin-bottom: 20px;
+            border-top: 1px dashed #e2e8f0;
+            padding-top: 10px;
+        }
+
+        .btn-order {
+            background-color: var(--classic-blue);
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 4px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.25s ease, transform 0.2s ease;
+        }
+
+        .btn-order:hover { background-color: var(--primary-dark); }
+        .btn-order:active { transform: scale(0.98); }
+
+        /* Modals & Popups */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 4000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: white;
+            padding: 35px;
+            border-radius: 6px;
+            width: 100%;
+            max-width: 550px;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.8rem; cursor: pointer; color: var(--text-muted); }
+        .close-modal:hover { color: var(--danger-red); }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--primary-dark); }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 1rem; color: var(--text-main); outline: none; }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--accent-blue); }
+
+        .bkash-header { background-color: var(--bkash-pink); color: white; padding: 15px; text-align: center; margin: -35px -35px 25px -35px; }
+        .bkash-notice-box { background-color: #fff1f2; border-left: 4px solid var(--bkash-pink); padding: 12px; margin-bottom: 20px; font-size: 0.95rem; }
+
+        /* Classic Tracking Box */
+        .tracking-box {
+            background: white;
+            border-radius: 6px;
+            padding: 30px;
+            margin-top: 50px;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Tables */
+        .order-table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; }
+        .order-table th, .order-table td { border: 1px solid #cbd5e1; padding: 14px; text-align: left; font-size: 1rem; }
+        .order-table th { background-color: #f8fafc; color: var(--primary-dark); font-weight: 700; }
+
+        /* Admin Full Screen Panel */
+        #adminViewLayer {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #0f172a;
+            z-index: 6000;
+            overflow-y: auto;
+            padding: 50px 20px;
+        }
+
+        .admin-dashboard-container { max-width: 1350px; margin: 0 auto; background: white; padding: 40px; border-radius: 6px; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px; }
+
+        footer { background-color: var(--primary-dark); color: #94a3b8; text-align: center; padding: 35px; font-size: 1rem; border-top: 2px solid #cbd5e1; }
+        footer a { color: #38bdf8; text-decoration: none; font-weight: bold; margin-left: 10px; cursor: pointer; }
+        
+        .download-btn {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: bold;
+            margin-top: 5px;
+            transition: background 0.2s ease;
+        }
+        .download-btn:hover { background: #0369a1; }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .status-active { background-color: #dcfce7; color: #166534; }
+        .status-blocked { background-color: #fee2e2; color: #991b1b; }
+
+        /* প্রোফাইল প্যানেল স্টাইল */
+        .profile-avatar-large {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 3px solid #d4af37;
+            object-fit: cover;
+            margin: 0 auto 15px auto;
+            display: block;
+            background: #f1f5f9;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="primeSystemToast" class="prime-toast">
+        <i class="fa-solid fa-circle-check" style="color: #d4af37; font-size: 1.4rem;"></i>
+        <span id="primeToastMessage">অপারেশন সফল হয়েছে!</span>
+    </div>
+
+    <div id="loginPreloader">
+        <img src="" id="preloaderLogoView" class="preloader-img" alt="Loading Logo">
+        <h2 style="font-weight: bold; margin-bottom: 10px; letter-spacing: 1px; color: #f3e5ab;">PRIME DIGITAL BD</h2>
+        <p style="font-size: 0.95rem; margin-bottom: 20px; color: #94a3b8;">প্যানেল লোড হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...</p>
+        <div class="preloader-bar"></div>
+    </div>
+
+
+    <div class="auth-overlay" id="authSection">
+        <div class="auth-card" id="registerBox">
+            <div style="text-align: center; margin-bottom: 25px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                <img src="" class="brand-logo-img globalBrandLogo" alt="Logo">
+                <div><span class="logo-text-main">Prime Digital</span><span class="logo-text-sub">Bd</span></div>
+            </div>
+            <p style="text-align: center; margin-bottom: 25px; color: var(--text-muted);">নতুন কাস্টমার অ্যাকাউন্ট তৈরি করুন</p>
+            <form onsubmit="handleCustomerRegister(event)">
+                <div class="form-group">
+                    <label>মোবাইল নম্বর *</label>
+                    <input type="tel" id="regPhone" required placeholder="01XXXXXXXXX">
+                </div>
+                <div class="form-group">
+                    <label>জিমেইল এড্রেস (Gmail) *</label>
+                    <input type="email" id="regEmail" required placeholder="name@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label>পাসওয়ার্ড সেট করুন *</label>
+                    <input type="password" id="regPass" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-order" style="background-color: var(--success-green);">Create Account</button>
+            </form>
+            <div style="text-align: center; margin-top: 20px; color: var(--text-muted);">
+                ইতিমধ্যে অ্যাকাউন্ট আছে? <span style="color: var(--accent-blue); cursor:pointer; font-weight:bold;" onclick="toggleAuthBoxes('login')">লগইন করুন</span>
+            </div>
+        </div>
+
+        <div class="auth-card" id="loginBox" style="display: none;">
+            <div style="text-align: center; margin-bottom: 25px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                <img src="" class="brand-logo-img globalBrandLogo" alt="Logo">
+                <div><span class="logo-text-main">Prime Digital</span><span class="logo-text-sub">Bd</span></div>
+            </div>
+            <p style="text-align: center; margin-bottom: 25px; color: var(--text-muted);">আপনার অ্যাকাউন্টে লগইন করুন</p>
+            <form onsubmit="handleCustomerLogin(event)">
+                <div class="form-group">
+                    <label>জিমেইল বা মোবাইল নম্বর *</label>
+                    <input type="text" id="logUser" required placeholder="মোবাইল অথবা জিমেইল দিন">
+                </div>
+                <div class="form-group">
+                    <label>পাসওয়ার্ড *</label>
+                    <input type="password" id="logPass" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-order">Log In</button>
+            </form>
+            <div style="text-align: center; margin-top: 20px; color: var(--text-muted);">
+                নতুন কাস্টমার? <span style="color: var(--accent-blue); cursor:pointer; font-weight:bold;" onclick="toggleAuthBoxes('register')">নতুন অ্যাকাউন্ট তৈরি করুন</span>
+            </div>
+        </div>
+    </div>
+
+
+    <nav>
+        <div class="logo-container">
+            <img src="" class="brand-logo-img globalBrandLogo" alt="Logo">
+            <div><span class="logo-text-main">Prime Digital</span><span class="logo-text-sub">Bd</span></div>
+        </div>
+        <div class="nav-links">
+            <span class="user-balance-badge">পয়েন্ট ব্যালেন্স: <span id="currentPointsDisplay">0</span> Point</span>
+            <span style="background: var(--bkash-pink); color: white; padding: 8px 16px; border-radius: 4px;" onclick="openRechargeModal()">Recharge Account</span>
+            
+            <img src="https://img.icons8.com/officel/80/user.png" id="custNavAvatarImg" class="cust-nav-avatar" title="আপনার প্রোফাইল" onclick="openProfileModal()">
+            
+            <span style="color: #ef4444;" onclick="logoutCustomer()">লগআউট</span>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1 id="heroTitleView">বাংলাদেশের সর্ববৃহৎ অনলাইন সেবা পোর্টাল</h1>
+        <p id="heroDescView">একই ঠিকানায় ২৬টিরও বেশি জরুরি সরকারি ই-সেবা এবং প্রফেশনাল আইটি সリューション। আপনার কাঙ্ক্ষিত সেবাটি অর্ডার করুন, আমাদের টিম দ্রুত সম্পন্ন করে দেবে।</p>
+    </div>
+
+    <div class="container">
+        
+        <div class="help-desk-panel">
+            <div class="help-info">
+                <h3><i class="fa-solid fa-headset" style="color: var(--classic-blue)"></i> কাস্টমার হেল্প অ্যান্ড সাপোর্ট সেন্টার</h3>
+                <p>যেকোনো অর্ডার সংক্রান্ত সমস্যা, রিচার্জ অথবা জরুরি ডক সংক্রান্ত তথ্যের জন্য সরাসরি আমাদের সাথে হোয়াটসঅ্যাপে যোগাযোগ করুন।</p>
+            </div>
+            <div>
+                <a href="https://api.whatsapp.com/send?phone=8801511980265&text=Hello%20Prime%20Digital%20Bd,%20I%20need%20some%20help%20with%20my%20order." 
+                   target="_blank" 
+                   class="whatsapp-connect-btn">
+                    <i class="fa-brands fa-whatsapp" style="font-size: 1.5rem;"></i>
+                    সরাসরি হোয়াটসঅ্যাপে যোগাযোগ
+                </a>
+            </div>
+        </div>
+
+        <h2 class="section-title">আমাদের সকল ডিজিটাল সেবাসমূহ</h2>
+        <div class="services-grid" id="servicesGrid">
+            </div>
+
+        <div class="tracking-box">
+            <h3 style="color: var(--primary-dark); margin-bottom: 20px; font-weight: 700;">📦 আপনার অর্ডার ও ডেলিভারি স্ট্যাটাস (লাইভ নোটিফিকেশন)</h3>
+            <div style="overflow-x: auto;">
+                <table class="order-table" style="margin-bottom: 0;">
+                    <thead>
+                        <tr style="background-color: #f1f5f9;">
+                            <th>অর্ডার আইডি</th>
+                            <th>সেবার নাম</th>
+                            <th>কাটা যাওয়া পয়েন্ট</th>
+                            <th>স্ট্যাটাস</th>
+                            <th>ডেলিভারি ফাইল / ফাইল ডাউনলোড স্লট</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customerTrackingTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal" id="profileModal">
+        <div class="modal-content" style="max-width: 480px;">
+            <span class="close-modal" onclick="closeProfileModal()">&times;</span>
+            <h3 style="text-align: center; margin-bottom: 20px; color: var(--primary-dark); font-weight: bold;"><i class="fa-solid fa-user-gear"></i> কাস্টমার প্রোফাইল👑</h3>
+            
+            <div style="text-align: center; margin-bottom: 25px;">
+                <img src="https://img.icons8.com/officel/80/user.png" id="profileModalAvatarImg" class="profile-avatar-large" alt="User Avatar">
+                <div style="margin-top: 10px;">
+                    <label style="background: var(--bg-light); padding: 6px 14px; border-radius: 4px; border: 1px solid #cbd5e1; font-size: 0.9rem; cursor: pointer; font-weight: bold; color: var(--classic-blue);">
+                        <i class="fa-solid fa-camera"></i> ছবি পরিবর্তন করুন
+                        <input type="file" id="custProfilePicInput" accept="image/*" style="display: none;" onchange="updateCustomerProfilePicture(this)">
+                    </label>
+                </div>
+            </div>
+
+            <div style="background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 25px;">
+                <p style="margin-bottom: 8px; font-size: 0.95rem;">📧 <strong>ইউজার আইডি (Gmail):</strong> <span id="profUserEmail" style="color: var(--accent-blue); font-weight: bold;"></span></p>
+                <p style="font-size: 0.95rem;">📱 <strong>মোবাইল নম্বর:</strong> <span id="profUserPhone"></span></p>
+            </div>
+
+            <h4 style="color: var(--primary-dark); margin-bottom: 15px; font-weight: bold; border-top: 1px dashed #cbd5e1; padding-top: 15px;"><i class="fa-solid fa-key"></i> সিকিউরিটি পাসওয়ার্ড পরিবর্তন</h4>
+            <form onsubmit="handleCustomerPasswordChange(event)">
+                <div class="form-group">
+                    <label>নতুন পাসওয়ার্ড লিখুন *</label>
+                    <input type="password" id="profNewPass" required placeholder="সর্বনিম্ন ৬ ডিজিট">
+                </div>
+                <button type="submit" class="btn-order" style="background-color: var(--primary-dark);">পাসওয়ার্ড সেভ করুন</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="modal" id="rechargeModal">
+        <div class="modal-content" style="max-width: 460px;">
+            <span class="close-modal" onclick="closeRechargeModal()">&times;</span>
+            <div class="bkash-header"><h2>bKash Cash In / Send Money</h2></div>
+            <div class="bkash-notice-box">
+                <strong>নিয়মাবলী:</strong> নিচে দেওয়া বিকাশ নম্বরে আপনার বিকাশ অ্যাপ থেকে প্রথমে <strong>Send Money</strong> করুন (১ টাকা = ১ পয়েন্ট)। টাকা পাঠানোর পর তথ্য ফর্মটি ফিলাপ করুন।
+            </div>
+            <p style="font-size: 1.15rem; margin-bottom: 20px; text-align: center;">বিকাশ পার্সোনাল নম্বর: <strong style="color: var(--bkash-pink); font-size: 1.4rem;">01889802657</strong></p>
+            <form onsubmit="submitRechargeRequest(event)">
+                <div class="form-group">
+                    <label>যে নম্বর থেকে টাকা পাঠিয়েছেন (bKash Number) *</label>
+                    <input type="tel" id="rcgSenderPhone" required placeholder="01XXXXXXXXX">
+                </div>
+                <div class="form-group">
+                    <label>টাকার পরিমাণ (Amount BDT) *</label>
+                    <input type="number" id="rcgAmount" required placeholder="যেমন: 100">
+                </div>
+                <button type="submit" class="btn-order" style="background-color: var(--bkash-pink);">রিচার্জ রিকোয়েস্ট পাঠান</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeOrderModal()">&times;</span>
+            <h3 id="modalServiceTitle" style="margin-bottom: 8px; color: var(--classic-blue); font-weight: 700;">সেবার নাম</h3>
+            <p style="color: var(--danger-red); font-weight: bold; margin-bottom: 20px; font-size: 1rem;">💡 এই সেবার জন্য আপনার অ্যাকাউন্ট থেকে <span id="modalServicePrice">0</span> পয়েন্ট করা হবে।</p>
+            
+            <form id="orderForm" onsubmit="submitForm(event)">
+                <input type="hidden" id="selectedServiceId">
+                <div class="form-group">
+                    <label>আপনার নাম *</label>
+                    <input type="text" id="custName" required placeholder="পূর্ণ নাম লিখুন">
+                </div>
+                <div class="form-group">
+                    <label>মোবাইল নম্বর *</label>
+                    <input type="tel" id="custPhone" required placeholder="017xxxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label>প্রয়োজনীয় তথ্য / বিবরণ (বা ড্রাইভ লিংক)</label>
+                    <textarea id="custDetails" rows="3" placeholder="আবেদনের বিবরণ বা ড্রাইভ লিংক এখানে দিন..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>ডকুমেন্ট ফাইল আপলোড করুন</label>
+                    <input type="file" id="custFile">
+                </div>
+                <button type="submit" class="btn-order" style="background-color: var(--success-green);">কনফার্ম অর্ডার করুন</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="adminViewLayer">
+        <div class="auth-card" id="adminLoginBox" style="margin: 80px auto;">
+            <h3 style="text-align: center; margin-bottom: 20px; color: var(--primary-dark); font-weight: 700;">🔐 সেন্ট্রাল অ্যাডমিন লগইন</h3>
+            
+            <div id="adminMainLoginForm">
+                <div class="form-group">
+                    <label>ইউজার আইডি (User ID)</label>
+                    <input type="text" id="admUser" placeholder="Admin আইডি">
+                </div>
+                <div class="form-group">
+                    <label>পাসওয়ার্ড (Password)</label>
+                    <input type="password" id="admPass" placeholder="••••••••">
+                </div>
+                <button class="btn-order" onclick="handleAdminLogin()" style="background-color: var(--primary-dark);">ভেরিফাই লগইন</button>
+                
+                <div style="text-align: center; margin-top: 15px;">
+                    <span style="color: var(--danger-red); font-size: 0.95rem; cursor: pointer; font-weight: bold; text-decoration: underline;" onclick="toggleAdminForgetForm(true)">Forget Password?</span>
+                </div>
+                <button class="btn-order" onclick="closeAdminLayer()" style="background-color: var(--text-muted); margin-top: 15px;">সাইটে ফিরে যান</button>
+                <p id="loginError" style="color: var(--danger-red); text-align: center; margin-top: 10px; display: none; font-weight: bold;"></p>
+            </div>
+
+            <div id="adminForgetPasswordForm" style="display: none;">
+                <p style="color: var(--danger-red); font-weight: bold; font-size: 0.9rem; background: #fee2e2; padding: 10px; border-radius: 4px; margin-bottom: 15px; text-align: center;">
+                    ⚠️ নিরাপত্তা সতর্কতা: পাসওয়ার্ড কোথাও সংরক্ষণ বা শো করা হবে না।
+                </p>
+                <div class="form-group">
+                    <label>পূর্বের পুরাতন পাসওয়ার্ড (Old Password) *</label>
+                    <input type="password" id="admOldPassInput" placeholder="আপনার আগের পাসওয়ার্ড">
+                </div>
+                <div class="form-group">
+                    <label>নতুন পাসওয়ার্ড (New Password) *</label>
+                    <input type="password" id="admNewPassInput" placeholder="সর্বনিম্ন ৬ ডিজিট">
+                </div>
+                <div class="form-group">
+                    <label>নতুন পাসওয়ার্ডটি পুনরায় লিখুন (Re-type Password) *</label>
+                    <input type="password" id="admConfirmPassInput" placeholder="আবার লিখুন">
+                </div>
+                <button class="btn-order" onclick="handleAdminPasswordReset()" style="background-color: var(--success-green);">পাসওয়ার্ড রিসেট করুন</button>
+                <button class="btn-order" onclick="toggleAdminForgetForm(false)" style="background-color: var(--text-muted); margin-top: 10px;">লগইন ফর্মে ফিরে যান</button>
+            </div>
+        </div>
+
+        <div class="admin-dashboard-container" id="adminDashboardActual" style="display: none;">
+            <div class="dashboard-header">
+                <h2>📊 Prime Digital - অল কাস্টমার ও কন্ট্রোল ডাটা ব্যাংক</h2>
+                <button style="background:var(--danger-red); color:white; padding:10px 20px; border:none; border-radius:4px; cursor:pointer; font-weight:bold;" onclick="closeAdminLayer()">ড্যাশবোর্ড বন্ধ করুন</button>
+            </div>
+
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 25px; border-radius: 4px; margin-bottom: 30px;">
+                <h4 style="color: #166534; margin-bottom: 15px; font-weight: 700;"><i class="fa-solid fa-pen-to-square"></i> হোমপেজ ব্যানার টেক্সট পরিবর্তন করুন</h4>
+                <div class="form-group">
+                    <label>মূল শিরোনাম (Main Title)</label>
+                    <input type="text" id="admHeroTitleInput">
+                </div>
+                <div class="form-group">
+                    <label>উপ-শিরোনাম / বিবরণ (Subtitle Description)</label>
+                    <textarea id="admHeroDescInput" rows="2"></textarea>
+                </div>
+                <button class="btn-order" onclick="saveHeroTextChanges()" style="background-color: var(--success-green); max-width: 200px;">টেক্সট আপডেট করুন</button>
+            </div>
+
+            <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 30px; border-radius: 4px; margin-bottom: 40px;">
+                <h4 style="color: var(--primary-dark); margin-bottom: 15px; font-weight: 700;"><i class="fa-solid fa-users"></i> কাস্টমার অ্যাকাউন্ট ও লাইভ একটিভ স্ট্যাটাস ম্যানেজমেন্ট</h4>
+                <div style="overflow-x: auto;">
+                    <table class="order-table">
+                        <thead>
+                            <tr style="background-color: #f1f5f9;">
+                                <th>জিমেইল (আইডি)</th>
+                                <th>মোবাইল নম্বর</th>
+                                <th>পয়েন্ট ব্যালেন্স</th>
+                                <th>স্ট্যাটাস</th>
+                                <th>অ্যাকশন কন্ট্রোল</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUsersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div style="background: #fffbeb; border: 1px solid #fef08a; padding: 25px; border-radius: 4px; margin-bottom: 30px;">
+                <h4 style="color: #854d0e; font-weight: 700;"><i class="fa-solid fa-image"></i>  কন্ট্রোল প্যানেল মূল লোগো পরিবর্তন করুন</h4>
+                <p style="font-size: 0.9rem; color: #71717a; margin-bottom: 15px;">আপনার নতুন লোগো ফাইলটি এখানে আপলোড করলে সম্পূর্ণ সিস্টেমের লোগো ডাইনামিকালি পরিবর্তিত হয়ে যাবে।</p>
+                <input type="file" id="admMainSystemLogoFile" accept="image/*" onchange="updateSystemMainLogo(this)">
+            </div>
+
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; padding: 30px; border-radius: 4px; margin-bottom: 40px;">
+                <h4 style="color: var(--primary-dark); margin-bottom: 15px; font-weight: 700;">🔧 সেবামূলক সেটিংস ও রেট কন্ট্রোল (অ্যাডমিন এডিটর প্যানেল)</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label>সম্পাদনা করার জন্য সেবাটি নির্বাচন করুন</label>
+                        <select id="admServiceSelector" onchange="populateServiceEditor()">
+                            </select>
+                    </div>
+                    <div class="form-group">
+                        <label>সেবার ডাইনামিক নাম</label>
+                        <input type="text" id="admServiceName">
+                    </div>
+                    <div class="form-group">
+                        <label>সেবার রেট বা মূল্য (Point)</label>
+                        <input type="number" id="admServicePrice">
+                    </div>
+                    <div class="form-group">
+                        <label>সেবার নতুন লোগো ছবি আপলোড করুন</label>
+                        <input type="file" id="admServiceLogoFile" accept="image/*">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>সেবার সংক্ষিপ্ত বিবরণ (সাব-টাইটেল টেক্সট)</label>
+                    <textarea id="admServiceDesc" rows="2" placeholder="সেবার বিবরণ লিখুন..."></textarea>
+                </div>
+                <button class="btn-order" onclick="saveServiceChanges()" style="background-color: var(--success-green); max-width: 220px;">সেটিংস আপডেট করুন</button>
+            </div>
+            
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; padding: 30px; border-radius: 4px; margin-bottom: 40px;">
+                <h4 style="color: var(--primary-dark); margin-bottom: 15px; font-weight: 700;">💳 কাস্টমার বিকাশ রিচার্জ রিকোয়েস্ট ম্যানেজমেন্ট</h4>
+                <div style="overflow-x: auto;">
+                    <table class="order-table">
+                        <thead>
+                            <tr style="background-color: #f8fafc;">
+                                <th>কাস্টমার অ্যাকাউন্ট</th>
+                                <th>বিকাশ সেন্ডার নম্বর</th>
+                                <th>টাকার পরিমাণ (পয়েন্ট)</th>
+                                <th>অ্যাকশন কন্ট্রোল</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rechargeTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <h4 style="color: var(--primary-dark); margin-bottom: 15px; font-weight: 700;">📋 গ্রাহকদের পাঠানো অর্ডার ও ডেলিভারি প্রসেসিং ড্যাশবোর্ড</h4>
+            <div style="overflow-x: auto;">
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th>অর্ডার আইডি</th>
+                            <th>গ্রাহক জিমেইল</th>
+                            <th>সেবার নাম ও ফি</th>
+                            <th>গ্রাহকের নাম ও মোবাইল</th>
+                            <th>বিবরণ / কাস্টমার ফাইল (ডাউনলোড লিংক)</th>
+                            <th>ডেলিভারি ফাইল প্রোসেসিং ও আপলোডার বক্স</th>
+                            <th>অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Prime Digital Bd. All Rights Reserved. | <a onclick="openAdminLoginLayer()">Admin Area</a></p>
+    </footer>
+
+
+    <script>
+        // ডিফল্ট লোগো, টেক্সট এবং সিকিউরড কুয়েরি কি-ম্যানেজমেন্ট
+        const defaultPlaceholderLogo = "https://img.icons8.com/fluency/96/internet-hub.png";
+        const defaultHeroTitle = "বাংলাদেশের সর্ববৃহৎ অনলাইন সেবা পোর্টাল";
+        const defaultHeroDesc = "একই ঠিকানায় ২৬টিরও বেশি জরুরি সরকারি ই-সেবা এবং প্রফেশনাল আইটি সリューション। আপনার কাঙ্ক্ষিত সেবাটি অর্ডার করুন, আমাদের টিম দ্রুত সম্পন্ন করে দেবে।";
+        const defaultAvatar = "https://img.icons8.com/officel/80/user.png";
+        
+        // রিয়েলটাইম ব্রুট-ফোর্স সিকিউরিটি ট্র্যাকার ভেরিয়েবলস
+        let failedLoginAttempts = 0;
+        const alertWhatsAppNumber = "01511980265";
+
+        // প্রাথমিক সিকিউর অ্যাডমিন পাসওয়ার্ড সেটআপ (যদি লোকাল স্টোরেজে না থাকে)
+        if(!localStorage.getItem('primeAdminSecureKey')) {
+            localStorage.setItem('primeAdminSecureKey', "018898@Tawhid#"); 
+        }
+
+        // ডাইনামিক ২ সেকেন্ডের অ্যানিমেটেড টোস্ট নোটিফিকেশন ফাংশন
+        function showPrimeToast(message) {
+            const toast = document.getElementById('primeSystemToast');
+            document.getElementById('primeToastMessage').innerText = message;
+            toast.style.display = 'flex';
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(120%)';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                    toast.style.opacity = '1';
+                    toast.style.transform = 'translateX(0)';
+                }, 300);
+            }, 2000);
+        }
+
+        function syncSystemLogos() {
+            let activeLogo = localStorage.getItem('primeSystemMainLogoData') || defaultPlaceholderLogo;
+            let logoElements = document.querySelectorAll('.globalBrandLogo');
+            logoElements.forEach(img => { img.src = activeLogo; });
+            let loaderLogo = document.getElementById('preloaderLogoView');
+            if(loaderLogo) loaderLogo.src = activeLogo;
+        }
+
+        function syncHeroTexts() {
+            let title = localStorage.getItem('primeHeroTitleData') || defaultHeroTitle;
+            let desc = localStorage.getItem('primeHeroDescData') || defaultHeroDesc;
+            document.getElementById('heroTitleView').innerText = title;
+            document.getElementById('heroDescView').innerText = desc;
+            
+            document.getElementById('admHeroTitleInput').value = title;
+            document.getElementById('admHeroDescInput').value = desc;
+        }
+
+        function updateSystemMainLogo(input) {
+            if(input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    localStorage.setItem('primeSystemMainLogoData', e.target.result);
+                    syncSystemLogos();
+                    showPrimeToast("সিস্টেম লোগো সফলভাবে পরিবর্তিত হয়েছে");
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function saveHeroTextChanges() {
+            const t = document.getElementById('admHeroTitleInput').value;
+            const d = document.getElementById('admHeroDescInput').value;
+            localStorage.setItem('primeHeroTitleData', t);
+            localStorage.setItem('primeHeroDescData', d);
+            syncHeroTexts();
+            showPrimeToast("হোমপেজ ব্যানার টেক্সট আপডেট হয়েছে");
+        }
+
+        // ২৬টি প্রফেশনাল ডিজিটাল সেবা ডেটা ব্যাংক
+        const defaultServices = [
+            { id: 1, type: "BD Govt", title: "ই-নামজারি (Mutation)", price: 50, logo: "https://img.icons8.com/fluency/48/land-sales.png", desc: "জমির ই-নামজারি, খতিয়ান সংশোধন এবং মিস কেসের অনলাইন আবেদন প্রসেস।" },
+            { id: 2, type: "BD Govt", title: "জন্ম ও মৃত্যু নিবন্ধন", price: 40, logo: "https://img.icons8.com/fluency/48/birth-certificate.png", desc: "নতুন ডিজিটাল জন্ম সনদ আবেদন, নাম বা বয়স সংশোধন এবং ভেরিফিকেশন।" },
+            { id: 3, type: "Premium", title: "মোবাইল লোকেশন ট্র্যাকিং", price: 150, logo: "https://img.icons8.com/fluency/48/radar.png", desc: "হারানো বা চুরি হওয়া মোবাইল ট্র্যাক এবং সাইবার সিকিউরিটি রিলেটেড সাপোর্ট।" },
+            { id: 4, type: "BD Govt", title: "NID বা স্মার্টকার্ড সেবা", price: 30, logo: "https://img.icons8.com/fluency/48/checked-identification-documents.png", desc: "নতুন ভোটার আইডি কার্ড, আইডি কার্ডের ভুল সংশোধন ও অনলাইন কপি ডাউনলোড।" },
+            { id: 5, type: "BD Govt", title: "ই-পাসপোর্ট (E-Passport)", price: 100, logo: "https://img.icons8.com/fluency/48/passport.png", desc: "নতুন ই-পাসপোর্ট ফরম ফিলাপ, স্লট বুকিং এবং রিনিউয়াল প্রসেস।" },
+            { id: 6, type: "BD Govt", title: "BRTA ড্রাইভিং লাইসেন্স", price: 80, logo: "https://img.icons8.com/fluency/48/driver-license.png", desc: "লার্নার লাইসেন্স, ড্রাইভিং লাইসেন্স নবায়ন এবং স্মার্টকার্ড ট্র্যাকিং।" },
+            { id: 7, type: "BD Govt", title: "ভূমি উন্নয়ন কর (খাজনা)", price: 50, logo: "https://img.icons8.com/fluency/48/tax.png", desc: "অনলাইনে জমির হোল্ডিং ট্যাক্স বা বার্ষিক খাজনা ক্যালকুলেশন ও পেমেন্ট কর প্রদান।" },
+            { id: 8, type: "BD Govt", title: "ই-টিন (e-TIN) সার্টিফিকেট", price: 40, logo: "https://img.icons8.com/fluency/48/file.png", desc: "নতুন ট্যাক্স আইডেন্টিফিকেশন নাম্বার বা ই-টিন রেজিস্ট্রেশন ও সার্টিফিকেট।" },
+            { id: 9, type: "BD Govt", title: "আয়কর রিটার্ন দাখিল", price: 200, logo: "https://img.icons8.com/fluency/48/accounting.png", desc: "অনলাইনে বাৎসরিক জিরো বা রেগুলার ট্যাক্স রিটার্ন ফাইল সাবমিশন গাইড।" },
+            { id: 10, type: "BD Govt", title: "পুলিশ ক্লিয়ারেন্স আবেদন", price: 120, logo: "https://img.icons8.com/fluency/48/police-badge.png", desc: "বিদেশ যাত্রা বা চাকরির জন্য অনলাইনে প্রফেশনাল police ক্লিয়ারেন্স সার্টিফিকেট।" },
+            { id: 11, type: "BD Govt", title: "পারিবারিক আদালত ও পরামর্শ", price: 60, logo: "https://img.icons8.com/fluency/48/scales.png", desc: "অনলাইন আইনি ড্রাফটিং, নোটিশ এবং পারিবারিক আইনি পরামর্শ সেবা।" },
+            { id: 12, type: "BD Govt", title: "ট্রেড লাইসেন্স আবেদন", price: 100, logo: "https://img.icons8.com/fluency/48/shop.png", desc: "সিটি কর্পোরেশন বা ইউনিয়ন পরিষদ থেকে ই-ট্রেড লাইসেন্স সংগ্রহ ও নবায়ন।" },
+            { id: 13, type: "BD Govt", title: "অনলাইন জিডি (Online GD)", price: 30, logo: "https://img.icons8.com/fluency/48/law.png", desc: "থানায় না গিয়ে যেকোনো প্রয়োজনীয় ডকুমেন্টস হারানোর অনলাইন সাধারণ ডায়েরি।" },
+            { id: 14, type: "IT Services", title: "ওয়েবসাইট ডেভেলপমেন্ট", price: 500, logo: "https://img.icons8.com/fluency/48/source-code.png", desc: "ব্যক্তিগত ব্লগ, ই-কমার্স শপ বা বিজনেস প্রফেশনাল রেসপন্সিভ ওয়েবসাইট তৈরি।" },
+            { id: 15, type: "IT Services", title: "গ্রাফিক্স ডিজাইন ও ব্র্যান্ডিং", price: 150, logo: "https://img.icons8.com/fluency/48/vector-line.png", desc: "লোগো, ফেসবুক ব্যানার, ভিজিটিং কার্ড ও আকর্ষণীয় ব্র্যান্ড ডিজাইন মেকিং।" },
+            { id: 16, type: "IT Services", title: "পাসপোর্ট সাইজ ফটো এডিটিং", price: 50, logo: "https://img.icons8.com/fluency/48/camera.png", desc: "ছবির ব্যাকগ্রাউন্ড রিমুভ, ড্রেস চেঞ্জ (সাদা/নীল শার্ট ও টাই পরিধান) ও ফেস ব্রাইটনেস।" },
+            { id: 17, type: "IT Services", title: "ডিজিটাল MARKETING ও বুস্টিং", price: 250, logo: "https://img.icons8.com/fluency/48/bullhorn.png", desc: "ফেসবুক ও ইউটিউব পেজ প্রমোশন, টার্গেটেড সেলস অ্যাড ক্যাম্পেইন চালনা।" },
+            { id: 18, type: "IT Services", title: "ভিдео এডিটিং ও প্রোডাকশন", price: 300, logo: "https://img.icons8.com/fluency/48/video-playlist.png", desc: "সোশ্যাল মিডিয়া কন্টেন্ট, রিলস বা প্রাতিষ্ঠানিক ভিডিও এডিটিং কালার গ্রেডিংসহ।" },
+            { id: 19, type: "IT Services", title: "কম্পিউটার টাইপিং ও কম্পোজ", price: 40, logo: "https://img.icons8.com/fluency/48/keyboard.png", desc: "বাংলা ও ইংরেজি নির্ভুল হাই-স্পিড টাইপিং, প্রজেক্ট ফাইল ও স্ক্যানিং ওয়ার্ক।" },
+            { id: 20, type: "BD Govt", title: "বিবাহ ও তালাক রেজিস্ট্রেশন", price: 100, logo: "https://img.icons8.com/fluency/48/hearts.png", desc: "ডিজিটাল ম্যারেজ সার্টিফিকেট এবং নিকাহনামা অনলাইন কপির আইনি প্রসেস।" },
+            { id: 21, type: "Education", title: "বিশ্ববিদ্যালয় ও college ভর্তি", price: 60, logo: "https://img.icons8.com/fluency/48/graduation-cap.png", desc: "দেশের সকল পাবলিক ও প্রাইভেট বিশ্ববিদ্যালয় এবং একাদশ শ্রেণিতে অনলাইন ভর্তি।" },
+            { id: 22, type: "Education", title: "পরীক্ষার রেজাল্ট ও মার্কশিট", price: 25, logo: "https://img.icons8.com/fluency/48/diploma.png", desc: "PSC, JSC, SSC ও HSC পরীক্ষার অফিশিয়াল মার্কশিট তুলে দেওয়া ও ভেরিফিকেশন।" },
+            { id: 23, type: "Visa", title: "ভিসা প্রসেসিং অ্যাসিস্ট্যান্স", price: 200, logo: "https://img.icons8.com/fluency/48/airplane-takeoff.png", desc: "ইন্ডিয়া ট্যুরিস্ট/মেডিকেল visa এবং ইউরোপ/অন্যান্য দেশের ই-ভিসา ফরম ফিল-আপ।" },
+            { id: 24, type: "Utility", title: "বিদ্যুৎ, গ্যাস ও পানির বিল", price: 30, logo: "https://img.icons8.com/fluency/48/rating-history.png", desc: "পল্লী বিদ্যুৎ, ডেসকো, নেসকো বা ওয়াসা বিলের হিসাব পরীক্ষা ও পেমেন্ট স্লিপ।" },
+            { id: 25, type: "Premium", title: "ডাটা রিকভারি সার্ভিস", price: 350, logo: "https://img.icons8.com/fluency/48/hard-drive.png", desc: "নষ্ট মেমোরি কার্ড, হার্ডডিস্ক বা মোবাইল থেকে ডিলিট হওয়া প্রয়োজনীয় ডাটা রিকভারি।" },
+            { id: 26, type: "Premium", title: "কম্পিউটার ট্রাবলশুটিং", price: 120, logo: "https://img.icons8.com/fluency/48/support.png", desc: "উইন্ডোজ সেটআপ, স্লো কম্পিউটার ফিক্সিং এবং প্রয়োজনীয় প্রিমিয়াম সফটওয়্যার ইন্সটল।" }
+        ];
+
+        let loggedInUserEmail = "";
+
+        if(!localStorage.getItem('primeServicesData')) {
+            localStorage.setItem('primeServicesData', JSON.stringify(defaultServices));
+        }
+
+        syncSystemLogos();
+        syncHeroTexts();
+
+        function renderCustomerServices() {
+            const grid = document.getElementById('servicesGrid');
+            grid.innerHTML = '';
+            let currentServices = JSON.parse(localStorage.getItem('primeServicesData'));
+            
+            currentServices.forEach((service, index) => {
+                grid.innerHTML += `
+                    <div class="service-card" style="animation-delay: ${index * 0.03}s">
+                        <div>
+                            <div class="service-logo-area">
+                                <img src="${service.logo}" class="service-img-node" alt="logo">
+                                <span class="service-badge">${service.type}</span>
+                            </div>
+                            <h3>${service.title}</h3>
+                            <p>${service.desc}</p>
+                            <div class="price-tag">সার্ভিস ফি: ${service.price} Point</div>
+                        </div>
+                        <button class="btn-order" onclick="openOrderModal(${service.id})">আবেদন বা অর্ডার করুন</button>
+                    </div>
+                `;
+            });
+        }
+
+        renderCustomerServices();
+
+        function toggleAuthBoxes(type) {
+            if (type === 'login') {
+                document.getElementById('registerBox').style.display = 'none';
+                document.getElementById('loginBox').style.display = 'block';
+            } else {
+                document.getElementById('registerBox').style.display = 'block';
+                document.getElementById('loginBox').style.display = 'none';
+            }
+        }
+
+        function handleCustomerRegister(e) {
+            e.preventDefault();
+            const phone = document.getElementById('regPhone').value;
+            const email = document.getElementById('regEmail').value;
+            const pass = document.getElementById('regPass').value;
+
+            let usersDB = JSON.parse(localStorage.getItem('primeUsersDB')) || {};
+            if(usersDB[email]) { alert("এই জিমেইলটি দিয়ে ইতিমধ্যে অ্যাকাউন্ট খোলা হয়েছে!"); return; }
+
+            usersDB[email] = { phone: phone, pass: pass, points: 0, status: "Active", avatar: defaultAvatar };
+            localStorage.setItem('primeUsersDB', JSON.stringify(usersDB));
+            
+            showPrimeToast("আপনার অ্যাকাউন্ট তৈরি সম্পূর্ণ হয়েছে");
+            setTimeout(() => { toggleAuthBoxes('login'); }, 1500);
+        }
+
+        function handleCustomerLogin(e) {
+            e.preventDefault();
+            const userInput = document.getElementById('logUser').value;
+            const passInput = document.getElementById('logPass').value;
+            let usersDB = JSON.parse(localStorage.getItem('primeUsersDB')) || {};
+            let match = false;
+            let targetEmail = "";
+
+            for(let email in usersDB) {
+                if((userInput === email || userInput === usersDB[email].phone) && passInput === usersDB[email].pass) {
+                    targetEmail = email;
+                    match = true;
+                    break;
+                }
+            }
+
+            if(match) {
+                if(usersDB[targetEmail].status === "Blocked") {
+                    alert("⛔ দুঃখিত! আপনার অ্যাকাউন্টটি অ্যাডমিন দ্বারা ব্লক করা হয়েছে। অনুগ্রহ করে কর্তৃপক্ষের সাথে যোগাযোগ করুন।");
+                    return;
+                }
+                
+                loggedInUserEmail = targetEmail;
+                document.getElementById('authSection').style.display = 'none';
+                const preloader = document.getElementById('loginPreloader');
+                preloader.style.display = 'flex';
+                
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                    updatePointsDisplay();
+                    syncCustomerAvatarIcon();
+                    renderCustomerTrackingTable();
+                    showPrimeToast("এক্সেস অনুমোদিত");
+                }, 2000);
+
+            } else { alert("❌ ভুল কাস্টমার আইডি বা পাসওয়ার্ড!"); }
+        }
+
+        function logoutCustomer() {
+            loggedInUserEmail = "";
+            document.getElementById('authSection').style.display = 'flex';
+            toggleAuthBoxes('login');
+        }
+
+        function updatePointsDisplay() {
+            if(!loggedInUserEmail) return;
+            let usersDB = JSON.parse(localStorage.getItem('primeUsersDB')) || {};
+            document.getElementById('currentPointsDisplay').innerText = usersDB[loggedInUserEmail].points || 0;
+        }
+
+        function syncCustomerAvatarIcon() {
+            if(!loggedInUserEmail) return;
+            let usersDB = JSON.parse(localStorage.getItem('primeUsersDB')) || {};
+            let userAvatar = usersDB[loggedInUserEmail].avatar || defaultAvatar;
+            document.getElementById('custNavAvatarImg').src = userAvatar;
+            document.getElementById('profileModalAvatarImg').src = userAvatar;
+        }
+
+        function openProfileModal() {
+            if(!loggedInUserEmail) return;
+            let usersDB = JSON.parse(localStorage.getItem('primeUsersDB')) || {};
+            let user = usersDB[loggedInUserEmail];
+
+            document.getElementById('profUserEmail').innerText = loggedInUserEmail;
+            document.getElementById('profUserPhone').innerText = user.phone || "N/A";
+            document.getElementById('profileModalAvatarImg').src = user.avatar || defaultAvatar;
+            document.getElementById('profileModal').style.display = 'flex';
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').style.display = 'none';
+        }
+
+        function updateCustomerProfilePicture(input) {
+            if(input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    let usersDB = JSON.parse(localStorage.getItem('primeUsersDB')) || {};
+                    if(usersDB[loggedInUserEmail]) {
+                        usersDB[loggedInUserEmail].avatar = e.target.result;
+                        localStorage.setItem('primeUsersDB', JSON.stringify(usersDB));
+                        syncCustomerAvatarIcon();
+                        showPrimeToast("প্রোফাইল ছবি পরিবর্তন সম্পূর্ণ হয়েছে");
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function handleCustomerPasswordChange(e) {
+            e.preventDefault();
+            const newPass = document.getElementById('profNewPass').value;
+            if(newPass.length < 6) {
+                alert("পাসওয়ার্ড অন্তত ৬ ডিজিটের হতে হবে!");
+                return;
+            }
+
+            let usersDB = JSON.parse(localStorage.getItem('primeUsersDB')) || {};
+            if(usersDB[loggedInUserEmail]) {
+                usersDB[loggedInUserEmail].pass = newPass;
+                localStorage.setItem('primeUsersDB', JSON.stringify(usersDB));
+                showPrimeToast("পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে");
+                document.getElementById('profNewPass').value = "";
+                setTimeout(() => { closeProfileModal(); }, 1000);
+            }
+        }
+
+        function openRechargeModal() { document.getElementById('rechargeModal').style.display = 'flex'; }
+        function closeRechargeModal() { document.getElementById('rechargeModal').style.display = 'none'; }
+
+        function submitRechargeRequest(e) {
+            e.preventDefault();
+            const senderPhone = document.getElementById('rcgSenderPhone').value;
+            const amount = document.getElementById('rcgAmount').value;
+
+            let rcgRequests = JSON.parse(localStorage.getItem('primeRechargeRequests')) || [];
+            rcgRequests.push({ userEmail: loggedInUserEmail, sender: senderPhone, amount: parseInt(amount) });
+            localStorage.setItem('primeRechargeRequests', JSON.stringify(rcgRequests));
+
+            showPrimeToast("রিচার্জ রিকোয়েস্ট পাঠানো হয়েছে");
+            closeRechargeModal();
+        }
+
+        function openOrderModal(serviceId) {
+            let currentServices = JSON.parse(localStorage.getItem('primeServicesData'));
+            let service = currentServices.find(s => s.id === serviceId);
+            
+            let usersDB = JSON.parse(localStorage.getItem('primeUsersDB')) || {};
+            let userPoints = usersDB[loggedInUserEmail].points || 0;
+
+            if(userPoints < service.price) {
+                alert(`⛔ পর্যাপ্ত পয়েন্ট নেই! এই সার্ভিসের জন্য ${service.price} পয়েন্ট প্রয়োজন।`);
+                openRechargeModal();
+                return;
+            }
+
+            document.getElementById('modalServiceTitle').innerText = service.title;
+            document.getElementById('modalServicePrice').innerText = service.price;
+            document.getElementById('selectedServiceId').value = serviceId;
+            document.getElementById('orderModal').style.display = 'flex';
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').style.display = 'none';
+            document.getElementById('orderForm').reset();
+        }
+
+        function submitForm(e) {
+            e.preventDefault();
+            let serviceId = parseInt(document.getElementById('selectedServiceId').value);
+            let currentServices = JSON.parse(localStorage.getItem('primeServicesData'));
+            let service = currentServices.find(s => s.id === serviceId);
+
+            let usersDB = JSON.parse(localStorage.getItem('primeUsersDB')) || {};
+            let userPoints = usersDB[loggedInUserEmail].points || 0;
+
+            if(userPoints < service.price) { alert("⛔ পর্যাপ্ত পয়েন্ট নেই!"); return; }
+
+            usersDB[loggedInUserEmail].points = userPoints - service.price;
+            localStorage.setItem('primeUsersDB', JSON.stringify(usersDB));
+            updatePointsDisplay();
+
+            const clientName = document.getElementById('custName').value;
+            const clientPhone = document.getElementById('custPhone').value;
+            const clientDetails = document.getElementById('custDetails').value;
+            const fileInput = document.getElementById('custFile');
+            
+            const orderId = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
+            
+            let orderObj = {
+                id: orderId,
+                userEmail: loggedInUserEmail,
+                serviceTitle: service.title,
+                cost: service.price,
+                name: clientName,
+                phone: clientPhone,
+                details: clientDetails,
+                fileName: "কোনো ফাইল দেওয়া হয়নি",
+                fileData: "",
+                status: "Pending",
+                deliveryLink: "",
+                deliveryFileName: "",
+                deliveryFileData: ""
+            };
+
+            if(fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                orderObj.fileName = file.name;
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    orderObj.fileData = event.target.result;
+                    saveOrderToDB(orderObj);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                saveOrderToDB(orderObj);
+            }
+        }
+
+        function saveOrderToDB(orderObj) {
+            let currentOrders = JSON.parse(localStorage.getItem('bdServicesOrders')) || [];
+            currentOrders.push(orderObj);
+            localStorage.setItem('bdServicesOrders', JSON.stringify(currentOrders));
+
+            closeOrderModal();
+            renderCustomerTrackingTable();
+            showPrimeToast("আপনার আবেদন সম্পূর্ণ হয়েছে");
+        }
+
+        function renderCustomerTrackingTable() {
+            const tbody = document.getElementById('customerTrackingTableBody');
+            tbody.innerHTML = '';
+            let orders = JSON.parse(localStorage.getItem('bdServicesOrders')) || [];
+            let myOrders = orders.filter(o => o.userEmail === loggedInUserEmail);
+
+            if(myOrders.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8;">আপনার কোনো অর্ডার হিস্ট্রি নেই।</td></tr>`;
+                return;
+            }
+
+            myOrders.forEach(order => {
+                let statusLabel = order.status === "Pending" ? `<span style="color:#b45309; font-weight:bold;">⏳ পেন্ডিং</span>` : `<span style="color:var(--success-green); font-weight:bold;">✅ সম্পন্ন</span>`;
+                let deliveryContent = `<i style="color:var(--text-muted);">কাজ প্রসেসিং হচ্ছে, সম্পন্ন হলে এখানে ডাউনলোডের বোতাম পাবেন।</i>`;
+                
+                if(order.status === "Completed") {
+                    deliveryContent = `<div style="background:#f8fafc; padding:15px; border-radius:6px; border:1px solid #cbd5e1; display:flex; flex-direction:column; gap:10px;">`;
+                    
+                    if(order.deliveryFileData) {
+                        deliveryContent += `
+                            <div>
+                                <span style="display:block; font-size:0.9rem; color:var(--text-main); margin-bottom:5px;">📁 ফাইলনেম: <strong>${order.deliveryFileName}</strong></span>
+                                <a href="${order.deliveryFileData}" download="${order.deliveryFileName}" class="download-btn" style="background-color:var(--success-green);">
+                                    <i class="fa-solid fa-file-arrow-down"></i> ফাইল ডাউনলোড করুন
+                                </a>
+                            </div>
+                        `;
+                    }
+                    
+                    if(order.deliveryLink && order.deliveryLink !== "#") {
+                        deliveryContent += `
+                            <div>
+                                <span style="display:block; font-size:0.9rem; color:var(--text-main); margin-bottom:5px;">🔗 লিংক:</span>
+                                <a href="${order.deliveryLink}" target="_blank" class="download-btn" style="background-color:var(--accent-blue);">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i> লিংক ভিজিট করুন
+                                </a>
+                            </div>
+                        `;
+                    }
+
+                    if(!order.deliveryFileData && (order.deliveryLink === "#" || !order.deliveryLink)) {
+                        deliveryContent += `<span style="color:var(--success-green); font-weight:bold;">অর্ডার সফলভাবে সম্পন্ন করা হয়েছে!</span>`;
+                    }
+                    
+                    deliveryContent += `</div>`;
+                }
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${order.id}</strong></td>
+                        <td>${order.serviceTitle}</td>
+                        <td>${order.cost} Point</td>
+                        <td>${statusLabel}</td>
+                        <td>${deliveryContent}</td>
+                    </tr>
+                `;
+            });
+        }
+
+
+        /* -------------------------------------------------------------
+           🔒 সেন্ট্রাল অ্যাডমিন কন্ট্রোল প্যানেল (আপডেটেড ও সিকিউরড)
+        ------------------------------------------------------------- */
+        function openAdminLoginLayer() {
+            document.getElementById('adminViewLayer').style.display = 'block';
+            document.getElementById('adminLoginBox').style.display = 'block';
+            document.getElementById('adminDashboardActual').style.display = 'none';
+            toggleAdminForgetForm(false);
+            setupAdminServiceSelector();
+        }
+
+        function closeAdminLayer() { document.getElementById('adminViewLayer').style.display = 'none'; }
+
+        function toggleAdminForgetForm(showForget) {
+            const loginForm = document.getElementById('adminMainLoginForm');
+            const forgetForm = document.getElementById('adminForgetPasswordForm');
+            const errBox = document.getElementById('loginError');
+            errBox.style.display = "none";
+            
+            if(showForget) {
+                loginForm.style.display = "none";
+                forgetForm.style.display = "block";
+            } else {
+                loginForm.style.display = "block";
+                forgetForm.style.display = "none";
+            }
+        }
+
+        // অ্যাডমিন প্রফেশনাল সিকিউর লগইন লজিক
+        function handleAdminLogin() {
+            const u = document.getElementById('admUser').value;
+            const p = document.getElementById('admPass').value;
+            const errBox = document.getElementById('loginError');
+            
+            // রিয়েলটাইম ডাটা ব্যাংক থেকে সিকিউর কি লোড
+            const secureMasterKey = localStorage.getItem('primeAdminSecureKey');
+            
+            if(u === "PDBD01511" && p === secureMasterKey) {
+                failedLoginAttempts = 0; // সফল লগইনে কাউন্টার রিসেট
+                errBox.style.display = "none";
+                document.getElementById('adminLoginBox').style.display = "none";
+                document.getElementById('adminDashboardActual').style.display = "block";
+                loadAdminData();
+            } else {
+                failedLoginAttempts++;
+                errBox.style.display = "block";
+                errBox.innerText = `ভুল আইডি বা পাসওয়ার্ড! (বাকি চেষ্টা: ${3 - failedLoginAttempts} বার)`;
+
+                // ২ বারের বেশি (অর্থাৎ ৩ নাম্বার বার ভুল করলে) সরাসরি সিকিউরিটি এলার্ট সহ হোয়াটসঅ্যাপে পাঠানো হবে
+                if(failedLoginAttempts >= 3) {
+                    alert("⛔ সিকিউরিটি ওয়ার্নিং: আপনি পর পর ৩ বার ভুল পাসওয়ার্ড দিয়েছেন! আপনার আইডি ব্লক এড়াতে রিয়েলটাইম সিগন্যাল পাঠানো হচ্ছে।");
+                    let textMessage = encodeURIComponent("⚠️ সর্তকতা সংকেত! আপনার Prime Digital প্যানেলে ভুল অ্যাডমিন পাসওয়ার্ড দিয়ে ৩ বার লগইন করার চেষ্টা করা হয়েছে। অনুগ্রহ করে নিরাপত্তা চেক করুন।");
+                    window.location.href = `https://api.whatsapp.com/send?phone=88${alertWhatsAppNumber}&text=${textMessage}`;
+                }
+            }
+        }
+
+        // অ্যাডমিন পাসওয়ার্ড ফরগেট রিসেট মেকানিজম (পূর্বের পাসওয়ার্ড ম্যাচিং লজিক)
+        function handleAdminPasswordReset() {
+            const oldPass = document.getElementById('admOldPassInput').value;
+            const newPass = document.getElementById('admNewPassInput').value;
+            const confirmPass = document.getElementById('admConfirmPassInput').value;
+            const secureMasterKey = localStorage.getItem('primeAdminSecureKey');
+
+            if(!oldPass || !newPass || !confirmPass) {
+                alert("সবগুলো তথ্য সঠিকভাবে পূরণ করুন!");
+                return;
+            }
+
+            if(oldPass !== secureMasterKey) {
+                alert("❌ আপনার দেওয়া পূর্বের (পুরাতন) পাসওয়ার্ডটি ভুল! সঠিক পুরাতন পাসওয়ার্ড দিন।");
+                return;
+            }
+
+            if(newPass.length < 6) {
+                alert("নিরাপত্তার স্বার্থে নতুন পাসওয়ার্ডটি অন্তত ৬ ডিজিটের দিন!");
+                return;
+            }
+
+            if(newPass !== confirmPass) {
+                alert("❌ নতুন পাসওয়ার্ড এবং রি-টাইপ পাসওয়ার্ড মিলেনি!");
+                return;
+            }
+
+            // নতুন পাসওয়ার্ড ডাটাবেজে সংরক্ষণ
+            localStorage.setItem('primeAdminSecureKey', newPass);
+            
+            // ইনপুট বক্স ক্লিয়ার ও ফর্ম টগল
+            document.getElementById('admOldPassInput').value = "";
+            document.getElementById('admNewPassInput').value = "";
+            document.getElementById('admConfirmPassInput').value = "";
+            
+            toggleAdminForgetForm(false);
+            showPrimeToast("পাসওয়ার্ড পরিবর্তন সম্পূর্ণ হয়েছে");
+        }
+
+        function setupAdminServiceSelector() {
+            const selector = document.getElementById('admServiceSelector');
+            selector.innerHTML = '';
+            let currentServices = JSON.parse(localStorage.getItem('primeServicesData'));
+            currentServices.forEach(s => {
+                selector.innerHTML += `<option value="${s.id}">${s.title}</option>`;
+            });
+            populateServiceEditor();
+        }
+
+        function populateServiceEditor() {
+            let serviceId = parseInt(document.getElementById('admServiceSelector').value);
+            let currentServices = JSON.parse(localStorage.getItem('primeServicesData'));
+            let service = currentServices.find(s => s.id === serviceId);
+
+            if(service) {
+                document.getElementById('admServiceName').value = service.title;
+                document.getElementById('admServicePrice').value = service.price;
+                document.getElementById('admServiceDesc').value = service.desc || "";
+            }
+        }
+
+        // সেবা এডিটর ফাংশন (যা লাইভ কাস্টমার প্যানেল গ্রিডে ডাটা বসিয়ে দেবে)
+        function saveServiceChanges() {
+            let serviceId = parseInt(document.getElementById('admServiceSelector').value);
+            let currentServices = JSON.parse(localStorage.getItem('primeServicesData'));
+            let idx = currentServices.findIndex(s => s.id === serviceId);
+
+            if(idx !== -1) {
+                currentServices[idx].title = document.getElementById('admServiceName').value;
+                currentServices[idx].price = parseInt(document.getElementById('admServicePrice').value);
+                currentServices[idx].desc = document.getElementById('admServiceDesc').value;
+
+                const logoFileInput = document.getElementById('admServiceLogoFile');
+                if(logoFileInput.files.length > 0) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        currentServices[idx].logo = e.target.result;
+                        localStorage.setItem('primeServicesData', JSON.stringify(currentServices));
+                        completeServiceSaveNotification();
+                    };
+                    reader.readAsDataURL(logoFileInput.files[0]);
+                } else {
+                    localStorage.setItem('primeServicesData', JSON.stringify(currentServices));
+                    completeServiceSaveNotification();
+                }
+            }
+        }
+
+        function completeServiceSaveNotification() {
+            showPrimeToast("সেবা কনফিগারেশন আপডেট সফল হয়েছে");
+            renderCustomerServices();
+            setupAdminServiceSelector();
+            document.getElementById('admServiceLogoFile').value = "";
+        }
+
+        function toggleUserStatus(email, currentStatus) {
+            let usersDB = JSON.parse(localStorage.getItem('primeUsersDB')) || {};
+            if(usersDB[email]) {
+                const nextStatus = currentStatus === "Active" ? "Blocked" : "Active";
+                usersDB[email].status = nextStatus;
+                localStorage.setItem('primeUsersDB', JSON.stringify(usersDB));
+                alert(`👤 ${email} অ্যাকাউন্টটি সফলভাবে ${nextStatus === "Active" ? "সক্রিয়" : "ব্লক"} করা হয়েছে।`);
+                loadAdminData();
+            }
+        }
+
+        function deleteUserAccount(email) {
+            if(confirm(`আপনি কি নিশ্চিতভাবে ${email} অ্যাকাউন্টটি ডিলিট করতে চান?`)) {
+                let usersDB = JSON.parse(localStorage.getItem('primeUsersDB')) || {};
+                if(usersDB[email]) {
+                    delete usersDB[email];
+                    localStorage.setItem('primeUsersDB', JSON.stringify(usersDB));
+                    alert("🗑️ কাস্টমার অ্যাকাউন্ট ডিলিট করা হয়েছে।");
+                    loadAdminData();
+                }
+            }
+        }
+
+        function loadAdminData() {
+            // ১. লাইভ কাস্টমার অ্যাকাউন্ট লিস্ট
+            const usersTableBody = document.getElementById('adminUsersTableBody');
+            usersTableBody.innerHTML = '';
+            let usersDB = JSON.parse(localStorage.getItem('primeUsersDB')) || {};
+            
+            let userEmails = Object.keys(usersDB);
+            if(userEmails.length === 0) {
+                usersTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8;">কোনো কাস্টমার অ্যাকাউন্ট রেজিস্টার্ড নেই।</td></tr>`;
+            } else {
+                userEmails.forEach(email => {
+                    let user = usersDB[email];
+                    let currentStatus = user.status || "Active";
+                    let statusTag = currentStatus === "Active" ? `<span class="status-badge status-active">Active</span>` : `<span class="status-badge status-blocked">Blocked</span>`;
+                    let toggleBtnText = currentStatus === "Active" ? "ব্লক করুন" : "অ্যাক্টিভ করুন";
+                    let btnColor = currentStatus === "Active" ? "var(--danger-red)" : "var(--success-green)";
+
+                    usersTableBody.innerHTML += `
+                        <tr>
+                            <td><strong>${email}</strong></td>
+                            <td>${user.phone || 'N/A'}</td>
+                            <td><strong style="color:var(--classic-blue);">${user.points || 0} Point</strong></td>
+                            <td>${statusTag}</td>
+                            <td>
+                                <div style="display:flex; gap:10px;">
+                                    <button class="btn-order" style="padding:5px 10px; font-size:0.85rem; background-color:${btnColor}; width:auto;" onclick="toggleUserStatus('${email}', '${currentStatus}')">${toggleBtnText}</button>
+                                    <button class="btn-order" style="padding:5px 10px; font-size:0.85rem; background-color:var(--primary-dark); width:auto;" onclick="deleteUserAccount('${email}')">ডিলিট</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            // ২. বিকাশ রিচার্জ রিকোয়েস্ট
+            const rcgBody = document.getElementById('rechargeTableBody');
+            rcgBody.innerHTML = '';
+            let rcgRequests = JSON.parse(localStorage.getItem('primeRechargeRequests')) || [];
+            
+            if(rcgRequests.length === 0) {
+                rcgBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8;">কোনো রিচার্জ রিকোয়েস্ট পেন্ডিং নেই।</td></tr>`;
+            } else {
+                rcgRequests.forEach((req, idx) => {
+                    rcgBody.innerHTML += `
+                        <tr>
+                            <td>${req.userEmail}</td>
+                            <td><strong style="color:var(--bkash-pink);">${req.sender}</strong></td>
+                            <td><strong>${req.amount} Point</strong></td>
+                            <td>
+                                <div style="display:flex; gap:10px;">
+                                    <button class="btn-order" style="padding:6px 12px; font-size:0.9rem; background-color:var(--success-green); width:auto;" onclick="approvePoints(${idx})">অ্যাপ্রুভ</button>
+                                    <button class="btn-order" style="padding:6px 12px; font-size:0.9rem; background-color:var(--danger-red); width:auto;" onclick="deleteRechargeRequest(${idx})">ডিলিট</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            // ৩. গ্রাহকদের পাঠানো অর্ডার ড্যাশবোর্ড
+            const orderBody = document.getElementById('orderTableBody');
+            orderBody.innerHTML = '';
+            let orders = JSON.parse(localStorage.getItem('bdServicesOrders')) || [];
+
+            if(orders.length === 0) {
+                orderBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#94a3b8;">কোনো কাস্টমার অর্ডার জমা নেই।</td></tr>`;
+                return;
+            }
+
+            orders.forEach((order, index) => {
+                let currentDeliveryLayout = "";
+                let actionBtn = "";
+
+                let customerFileSlot = `<span style="color:var(--text-muted)">কোনো ফাইল নেই</span>`;
+                if(order.fileData) {
+                    customerFileSlot = `
+                        <div style="margin-top:5px;">
+                            <span style="color:var(--success-green); font-weight:bold; display:block; font-size:0.9rem;">📁 ${order.fileName}</span>
+                            <a href="${order.fileData}" download="${order.fileName}" class="download-btn" style="padding:4px 8px; font-size:0.8rem;">
+                                <i class="fa-solid fa-cloud-arrow-down"></i> ডাউনলোড
+                            </a>
+                        </div>
+                    `;
+                }
+
+                if(order.status === "Pending") {
+                    currentDeliveryLayout = `
+                        <div style="display:flex; flex-direction:column; gap:8px;">
+                            <label style="font-size:0.85rem; font-weight:bold; color:var(--primary-dark);">১. কাস্টমারকে ফাইল দিন (Upload File):</label>
+                            <input type="file" id="admDeliveryFile-${index}">
+                            <label style="font-size:0.85rem; font-weight:bold; margin-top:5px; color:var(--primary-dark);">২. অথবা ড্রাইভ/ওয়েব লিংক দিন:</label>
+                            <input type="text" id="admDeliveryLink-${index}" placeholder="https://drive.google.com/..." style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:4px;">
+                        </div>
+                    `;
+                    actionBtn = `<button class="btn-order" style="padding:6px 12px; font-size:0.9rem; background-color:var(--success-green);" onclick="processOrderDelivery(${index})">ডেলিভারি সাবমিট</button>`;
+                } else {
+                    let fileStatusInfo = order.deliveryFileData ? `ফাইল আপলোড করা হয়েছে` : `কোনো ফাইল দেওয়া হয়নি`;
+                    currentDeliveryLayout = `
+                        <span style="color:var(--success-green); font-weight:bold;"><i class="fa-solid fa-check-double"></i> ডেলিভারি সম্পন্ন:</span><br>
+                        <small style="display:block;margin-top:2px;">• অবস্থা: ${fileStatusInfo}</small>
+                        <small style="display:block;word-break:break-all;">• লিংক: ${order.deliveryLink || 'কোনো লিংক নেই'}</small>
+                    `;
+                    actionBtn = `<span style="color:var(--success-green); font-weight:bold; font-size:1.05rem;"><i class="fa-solid fa-circle-check"></i> Delivered</span>`;
+                }
+
+                orderBody.innerHTML += `
+                    <tr>
+                        <td><strong>${order.id}</strong></td>
+                        <td>${order.userEmail}</td>
+                        <td><strong>${order.serviceTitle}</strong><br><small style="color:var(--accent-blue)">ফি: ${order.cost} pt</small></td>
+                        <td>${order.name}<br>${order.phone}</td>
+                        <td>
+                            <div style="font-size:0.95rem; border-bottom:1px dashed #cbd5e1; padding-bottom:5px; margin-bottom:5px;"><strong>বিবরণ:</strong> ${order.details || 'নোট নেই'}</div>
+                            ${customerFileSlot}
+                        </td>
+                        <td>${currentDeliveryLayout}</td>
+                        <td>
+                            <div style="display:flex; flex-direction:column; gap:6px;">
+                                ${actionBtn}
+                                <button style="padding:6px 12px; font-size:0.9rem; background:var(--danger-red); color:white; border:none; border-radius:4px; cursor:pointer;" onclick="deleteOrder(${index})">অর্ডার মুছুন</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function processOrderDelivery(index) {
+            const fileInput = document.getElementById(`admDeliveryFile-${index}`);
+            const linkInput = document.getElementById(`admDeliveryLink-${index}`).value;
+
+            if(fileInput.files.length === 0 && !linkInput) {
+                alert("⛔ অনুগ্রহ করে ডেলিভারি ফাইল বা ড্রাইভ লিংক প্রদান করুন!");
+                return;
+            }
+
+            let orders = JSON.parse(localStorage.getItem('bdServicesOrders')) || [];
+            orders[index].status = "Completed";
+            orders[index].deliveryLink = linkInput || "#";
+
+            if(fileInput.files.length > 0) {
+                const targetFile = fileInput.files[0];
+                orders[index].deliveryFileName = targetFile.name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    orders[index].deliveryFileData = e.target.result;
+                    localStorage.setItem('bdServicesOrders', JSON.stringify(orders));
+                    executeDeliveryCompleteAlert();
+                };
+                reader.readAsDataURL(targetFile);
+            } else {
+                orders[index].deliveryFileData = "";
+                orders[index].deliveryFileName = "";
+                localStorage.setItem('bdServicesOrders', JSON.stringify(orders));
+                executeDeliveryCompleteAlert();
+            }
+        }
+
+        function executeDeliveryCompleteAlert() {
+            showPrimeToast("ডেলিভারি ফাইল কাস্টমার প্যানেলে যুক্ত হয়েছে");
+            loadAdminData();
+            if(loggedInUserEmail) {
+                renderCustomerTrackingTable();
+            }
+        }
+
+        function approvePoints(idx) {
+            let rcgRequests = JSON.parse(localStorage.getItem('primeRechargeRequests')) || [];
+            let usersDB = JSON.parse(localStorage.getItem('primeUsersDB')) || {};
+            const target = rcgRequests[idx];
+
+            if(usersDB[target.userEmail]) {
+                usersDB[target.userEmail].points = (usersDB[target.userEmail].points || 0) + target.amount;
+                localStorage.setItem('primeUsersDB', JSON.stringify(usersDB));
+                rcgRequests.splice(idx, 1);
+                localStorage.setItem('primeRechargeRequests', JSON.stringify(rcgRequests));
+                
+                showPrimeToast("পয়েন্ট রিচার্জ অনুমোদন করা হয়েছে");
+                loadAdminData();
+                updatePointsDisplay();
+            }
+        }
+
+        function deleteRechargeRequest(idx) {
+            if(confirm("রিকোয়েস্টটি ডিলিট করতে চান?")) {
+                let rcgRequests = JSON.parse(localStorage.getItem('primeRechargeRequests')) || [];
+                rcgRequests.splice(idx, 1);
+                localStorage.setItem('primeRechargeRequests', JSON.stringify(rcgRequests));
+                loadAdminData();
+            }
+        }
+
+        function deleteOrder(index) {
+            if(confirm("অর্ডারটি ডিলিট করতে চান?")) {
+                let orders = JSON.parse(localStorage.getItem('bdServicesOrders')) || [];
+                orders.splice(index, 1);
+                localStorage.setItem('bdServicesOrders', JSON.stringify(orders));
+                loadAdminData();
+                renderCustomerTrackingTable();
+            }
+        }
+    </script>
+</body>
+</html>
